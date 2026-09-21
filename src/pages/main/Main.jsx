@@ -1,105 +1,35 @@
-import classes from './styles.module.css';
-import NewsBanner from '../../components/newsBanner/NewsBanner';
-import { useEffect, useState } from 'react';
-import { getCategories, getNews } from '../../API/apiNews';
-import NewsList from '../../components/newsList/NewsList';
-import Skeleton from '../../components/Skeleton/Skeleton';
-import Pagination from '../../components/Pagination/Pagination';
-import Categories from '../../components/Categories/Categories';
-import Search from '../../components/search/Search';
+import { getNews } from '../../API/apiNews';
+import LatestNews from '../../components/LatestNews/LatestNews';
+import NewsByFilters from '../../components/NewsByFilters/NewsByFilters';
+import { PAGE_SIZE } from '../../constants/constants';
 import { useDebounce } from '../../helpers/hooks/useDebounce';
+import { useFetch } from '../../helpers/hooks/useFetch';
+import { useFilters } from '../../helpers/hooks/useFilters';
+import classes from './styles.module.css';
 
 export default function Main() {
-  const [news, setNews] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [categories, setCategories] = useState([]);
-  const [keywords, setKeywords] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const totalPages = 10;
-  const pageSize = 10;
-  const debouncedKeywords = useDebounce(keywords, 1500);
+  const { filters, changeFilter } = useFilters({
+    page_number: 1,
+    page_size: PAGE_SIZE,
+    category: null,
+    keywords: '',
+  });
+  const debouncedKeywords = useDebounce(filters.keywords, 1500);
 
-  const fetchNews = async (currentPage) => {
-    try {
-      setIsLoading(true);
-      const response = await getNews({
-        page_number: currentPage,
-        page_size: pageSize,
-        category: selectedCategory === 'All' ? null : selectedCategory,
-        keywords: debouncedKeywords,
-      });
-      setNews(response.news);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const response = await getCategories();
-      setCategories(['All', ...response.categories]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchNews(currentPage);
-  }, [currentPage, selectedCategory, debouncedKeywords]);
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const { data, isLoading } = useFetch(getNews, {
+    ...filters,
+    keywords: debouncedKeywords,
+  });
 
   return (
     <main className={classes.main}>
-      <Categories
-        categories={categories}
-        setSelectedCategory={setSelectedCategory}
-        selectedCategory={selectedCategory}
-      />
+      <LatestNews isLoading={isLoading} banners={data && data.news} />
 
-      <Search keywords={keywords} setKeywords={setKeywords} />
-
-      {news.length > 0 && !isLoading ? (
-        <NewsBanner item={news[4]}></NewsBanner>
-      ) : (
-        <Skeleton type={'banner'} count={1} />
-      )}
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handleNextPage={handleNextPage}
-        handlePreviousPage={handlePreviousPage}
-        handlePageClick={handlePageClick}
-      />
-
-      {!isLoading ? <NewsList news={news}></NewsList> : <Skeleton type={'item'} count={10} />}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handleNextPage={handleNextPage}
-        handlePreviousPage={handlePreviousPage}
-        handlePageClick={handlePageClick}
+      <NewsByFilters
+        news={data?.news}
+        filters={filters}
+        isLoading={isLoading}
+        changeFilter={changeFilter}
       />
     </main>
   );
