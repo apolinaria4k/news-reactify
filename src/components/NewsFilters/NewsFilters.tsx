@@ -4,9 +4,15 @@ import { getCategories } from '../../API/apiNews';
 import { useFetch } from '../../helpers/hooks/useFetch';
 import Search from '../search/Search';
 import Slider from '../Slider/Slider';
+import type { CategoriesApiResponse, IFilters } from '../../interfaces';
 
-export default function NewsFilters({ filters, changeFilter }) {
-  const { data: dataCategories } = useFetch(getCategories);
+interface Props {
+  filters: IFilters;
+  changeFilter: (key: string, value: string | null | number) => void;
+}
+
+export default function NewsFilters({ filters, changeFilter }: Props) {
+  const { data: dataCategories } = useFetch<CategoriesApiResponse, null>(getCategories);
 
   return (
     <div className={classes.filters}>

@@ -1,3 +1,4 @@
+import type { IPaginationProps } from '../../interfaces';
 import classes from './styles.module.css';
 
 export default function Header({
@@ -6,7 +7,7 @@ export default function Header({
   handleNextPage,
   handlePreviousPage,
   handlePageClick,
-}) {
+}: IPaginationProps) {
   return (
     <div className={classes.pagination}>
       <button disabled={currentPage <= 1} onClick={handlePreviousPage} className={classes.arrow}>

@@ -1,6 +1,13 @@
+import type { DirectionType, SkeletonType } from '../../interfaces';
 import classes from './styles.module.css';
 
-export default function Skeleton({ count = 1, type = 'banner', direction = 'column' }) {
+interface Props {
+  type?: SkeletonType;
+  count?: number;
+  direction?: DirectionType;
+}
+
+export default function Skeleton({ count = 1, type = 'banner', direction = 'column' }: Props) {
   return (
     <>
       {count > 1 ? (
