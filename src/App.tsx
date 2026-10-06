@@ -1,14 +1,15 @@
-import Header from "./components/header/Header"
-import Main from "./pages/main/Main"
+import Header from './components/header/Header';
+import { useTheme } from './context/ThemeContext';
+import Main from './pages/main/Main';
 
-export default function App(){
+export default function App() {
+  const { isDark } = useTheme();
   return (
-    <>
-    <Header></Header>
-    <div className="container">
-      <Main></Main>
+    <div className={`app ${isDark ? 'dark' : 'light'}`}>
+      <Header></Header>
+      <div className="container">
+        <Main></Main>
+      </div>
     </div>
-    
-    </>
-  )
+  );
 }

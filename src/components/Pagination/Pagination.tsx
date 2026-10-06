@@ -1,15 +1,17 @@
+import { useTheme } from '../../context/ThemeContext';
 import type { IPaginationProps } from '../../interfaces';
 import classes from './styles.module.css';
 
-export default function Header({
+export default function Pagination({
   totalPages,
   currentPage,
   handleNextPage,
   handlePreviousPage,
   handlePageClick,
 }: IPaginationProps) {
+  const { isDark } = useTheme();
   return (
-    <div className={classes.pagination}>
+    <div className={`${classes.pagination}  ${isDark ? classes.dark : classes.light}`}>
       <button disabled={currentPage <= 1} onClick={handlePreviousPage} className={classes.arrow}>
         {'<'}
       </button>

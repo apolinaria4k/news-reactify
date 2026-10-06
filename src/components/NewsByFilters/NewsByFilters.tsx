@@ -9,7 +9,7 @@ import PaginationWrapper from '../PaginationWrapper/PaginationWrapper';
 import classes from './styles.module.css';
 import type { NewsApiResponse, ParamsType } from '../../interfaces';
 
-export default function NewsByFilters() {
+export const NewsByFilters = () => {
   const { filters, changeFilter } = useFilters({
     page_number: 1,
     page_size: PAGE_SIZE,
@@ -55,4 +55,4 @@ export default function NewsByFilters() {
       </PaginationWrapper>
     </section>
   );
-}
+};
