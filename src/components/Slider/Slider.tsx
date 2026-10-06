@@ -23,7 +23,7 @@ export default function Slider({ children, step = 150 }: Props) {
   return (
     <div className={classes.slider}>
       <button onClick={scrollLeft} className={classes.arrow}>{`<`}</button>
-      {React.cloneElement(children, { ref: sliderRef })}
+      {React.cloneElement(children as React.ReactElement, { ref: sliderRef } as any)}
       <button onClick={scrollRight} className={classes.arrow}>{`>`}</button>
     </div>
   );
